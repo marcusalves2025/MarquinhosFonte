@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MarquinhosFonte - Visualização de Códigos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+        
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .code-font {
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        }
+        
+        .hero-gradient {
+            background: linear-gradient(135deg, #1e293b 0%, #334155 50%, #475569 100%);
+        }
+        
+        .glow-effect {
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+        }
+        
+        .hover-glow:hover {
+            box-shadow: 0 0 30px rgba(59, 130, 246, 0.5);
+            transform: translateY(-2px);
+        }
+        
+        .code-block {
+            background: #1e293b;
+            border: 1px solid #334155;
+        }
+        
+        pre[class*="language-"] {
+            background: #1e293b !important;
+            border-radius: 8px;
+            border: 1px solid #334155;
+        }
+        
+        .smooth-scroll {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-white smooth-scroll">
+    <!-- Header -->
+    <header class="fixed top-0 w-full bg-slate-900/95 backdrop-blur-sm border-b border-slate-700 z-50">
+        <nav class="container mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 bg-gradient-to-r from-blue-500 to-cyan-400 rounded-lg flex items-center justify-center">
+                        <span class="text-white font-bold text-sm">MF</span>
+                    </div>
+                    <h1 class="text-xl font-bold bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-transparent">
+                        MarquinhosFonte
+                    </h1>
+                </div>
+                <div class="hidden md:flex space-x-8">
+                    <a href="#inicio" class="hover:text-blue-400 transition-colors">Início</a>
+                    <a href="#linguagens" class="hover:text-blue-400 transition-colors">Linguagens</a>
+                    <a href="#exemplos" class="hover:text-blue-400 transition-colors">Exemplos</a>
+                    <a href="#contato" class="hover:text-blue-400 transition-colors">Contato</a>
+                </div>
+                <button class="md:hidden text-white" onclick="toggleMobileMenu()">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+            </div>
+            <div id="mobile-menu" class="hidden md:hidden mt-4 space-y-2">
+                <a href="#inicio" class="block hover:text-blue-400 transition-colors">Início</a>
+                <a href="#linguagens" class="block hover:text-blue-400 transition-colors">Linguagens</a>
+                <a href="#exemplos" class="block hover:text-blue-400 transition-colors">Exemplos</a>
+                <a href="#contato" class="block hover:text-blue-400 transition-colors">Contato</a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="inicio" class="hero-gradient min-h-screen flex items-center pt-20">
+        <div class="container mx-auto px-6 text-center">
+            <h2 class="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-blue-400 via-cyan-300 to-blue-500 bg-clip-text text-transparent">
+                Explore, visualize e aprenda códigos
+            </h2>
+            <p class="text-xl md:text-2xl text-slate-300 mb-8 max-w-4xl mx-auto">
+                HTML, CSS, Java, Python, JavaScript e muito mais em um só lugar
+            </p>
+            <button onclick="scrollToSection('exemplos')" class="bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 px-8 py-4 rounded-full text-lg font-semibold transition-all duration-300 hover-glow">
+                Começar agora
+            </button>
+        </div>
+    </section>
+
+    <!-- Code Visualization Area -->
+    <section id="linguagens" class="py-20 bg-slate-800">
+        <div class="container mx-auto px-6">
+            <h3 class="text-4xl font-bold text-center mb-12 bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-transparent">
+                Visualizador de Código
+            </h3>
+            
+            <div class="max-w-6xl mx-auto">
+                <div class="mb-6 flex flex-wrap gap-4 justify-center">
+                    <select id="language-selector" class="bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="html">HTML</option>
+                        <option value="css">CSS</option>
+                        <option value="javascript">JavaScript</option>
+                        <option value="python">Python</option>
+                        <option value="java">Java</option>
+                        <option value="php">PHP</option>
+                    </select>
+                    <button onclick="loadExampleCode()" class="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-lg transition-colors flex items-center space-x-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                        </svg>
+                        <span>Carregar Exemplo</span>
+                    </button>
+                    <button onclick="previewCode()" class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg transition-colors flex items-center space-x-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                        </svg>
+                        <span>Visualizar</span>
+                    </button>
+                    <button onclick="copyCode()" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg transition-colors flex items-center space-x-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                        </svg>
+                        <span>Copiar</span>
+                    </button>
+                    <button onclick="clearCode()" class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg transition-colors flex items-center space-x-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                        </svg>
+                        <span>Limpar</span>
+                    </button>
+                </div>
+                
+                <div class="grid lg:grid-cols-2 gap-6">
+                    <div class="code-block rounded-lg p-6 glow-effect">
+                        <h4 class="text-lg font-semibold mb-4 text-cyan-300 flex items-center">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+                            </svg>
+                            Editor de Código
+                        </h4>
+                        <div class="relative">
+                            <textarea 
+                                id="code-editor" 
+                                class="w-full h-96 bg-slate-900 text-green-400 code-font text-sm p-4 border border-slate-600 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 leading-relaxed"
+                                placeholder="Digite seu código aqui ou carregue um exemplo..."
+                                spellcheck="false"
+                            ><!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minha Primeira Página</title>
+</head>
+<body>
+    <h1>Olá, Mundo!</h1>
+    <p>Esta é minha primeira página HTML.</p>
+</body>
+</html></textarea>
+                            <div class="absolute top-2 right-2 text-xs text-slate-400 bg-slate-800 px-2 py-1 rounded">
+                                <span id="language-indicator">HTML</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="preview-container" class="code-block rounded-lg p-6 glow-effect">
+                        <h4 class="text-lg font-semibold mb-4 text-cyan-300 flex items-center">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                            </svg>
+                            Visualização ao Vivo
+                        </h4>
+                        <div id="preview-area" class="bg-white rounded-lg border border-slate-300 min-h-[384px] overflow-hidden">
+                            <iframe id="preview-frame" class="w-full h-full min-h-[384px] border-0" srcdoc="<!DOCTYPE html><html><head><meta charset='UTF-8'><title>Minha Primeira Página</title></head><body style='font-family: Arial, sans-serif; margin: 20px;'><h1 style='color: #333;'>Olá, Mundo!</h1><p style='color: #666;'>Esta é minha primeira página HTML.</p></body></html>"></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Examples Section -->
+    <section id="exemplos" class="py-20 bg-slate-900">
+        <div class="container mx-auto px-6">
+            <h3 class="text-4xl font-bold text-center mb-12 bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-transparent">
+                Exemplos Prontos
+            </h3>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="bg-slate-800 rounded-lg p-6 border border-slate-700 hover-glow transition-all duration-300">
+                    <div class="flex items-center mb-4">
+                        <div class="w-10 h-10 bg-orange-500 rounded-lg flex items-center justify-center mr-3">
+                            <span class="text-white font-bold">H</span>
+                        </div>
+                        <h4 class="text-xl font-semibold">HTML Básico</h4>
+                    </div>
+                    <p class="text-slate-300 mb-4">Estrutura básica de uma página HTML com elementos essenciais.</p>
+                    <div class="flex space-x-2">
+                        <button onclick="loadExample('html')" class="flex-1 bg-blue-600 hover:bg-blue-700 px-3 py-2 rounded text-sm transition-colors">
+                            Ver Código
+                        </button>
+                        <button onclick="loadExampleWithPreview('html')" class="flex-1 bg-green-600 hover:bg-green-700 px-3 py-2 rounded text-sm transition-colors">
+                            Visualizar
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="bg-slate-800 rounded-lg p-6 border border-slate-700 hover-glow transition-all duration-300">
+                    <div class="flex items-center mb-4">
+                        <div class="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center mr-3">
+                            <span class="text-white font-bold">C</span>
+                        </div>
+                        <h4 class="text-xl font-semibold">CSS Estilização</h4>
+                    </div>
+                    <p class="text-slate-300 mb-4">Estilos CSS para criar layouts modernos e responsivos.</p>
+                    <div class="flex space-x-2">
+                        <button onclick="loadExample('css')" class="flex-1 bg-blue-600 hover:bg-blue-700 px-3 py-2 rounded text-sm transition-colors">
+                            Ver Código
+                        </button>
+                        <button onclick="loadExampleWithPreview('css')" class="flex-1 bg-green-600 hover:bg-green-700 px-3 py-2 rounded text-sm transition-colors">
+                            Visualizar
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="bg-slate-800 rounded-lg p-6 border border-slate-700 hover-glow transition-all duration-300">
+                    <div class="flex items-center mb-4">
+                        <div class="w-10 h-10 bg-yellow-500 rounded-lg flex items-center justify-center mr-3">
+                            <span class="text-white font-bold">JS</span>
+                        </div>
+                        <h4 class="text-xl font-semibold">JavaScript</h4>
+                    </div>
+                    <p class="text-slate-300 mb-4">Funções e interatividade com JavaScript moderno.</p>
+                    <div class="flex space-x-2">
+                        <button onclick="loadExample('javascript')" class="flex-1 bg-blue-600 hover:bg-blue-700 px-3 py-2 rounded text-sm transition-colors">
+                            Ver Código
+                        </button>
+                        <button onclick="loadExampleWithPreview('javascript')" class="flex-1 bg-green-600 hover:bg-green-700 px-3 py-2 rounded text-sm transition-colors">
+                            Visualizar
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="bg-slate-800 rounded-lg p-6 border border-slate-700 hover-glow transition-all duration-300">
+                    <div class="flex items-center mb-4">
+                        <div class="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center mr-3">
+                            <span class="text-white font-bold">Py</span>
+                        </div>
+                        <h4 class="text-xl font-semibold">Python</h4>
+                    </div>
+                    <p class="text-slate-300 mb-4">Algoritmos e estruturas de dados em Python.</p>
+                    <div class="flex space-x-2">
+                        <button onclick="loadExample('python')" class="flex-1 bg-blue-600 hover:bg-blue-700 px-3 py-2 rounded text-sm transition-colors">
+                            Ver Código
+                        </button>
+                        <button onclick="showLanguageInfo('python')" class="flex-1 bg-gray-600 hover:bg-gray-700 px-3 py-2 rounded text-sm transition-colors">
+                            Info
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="bg-slate-800 rounded-lg p-6 border border-slate-700 hover-glow transition-all duration-300">
+                    <div class="flex items-center mb-4">
+                        <div class="w-10 h-10 bg-red-500 rounded-lg flex items-center justify-center mr-3">
+                            <span class="text-white font-bold">J</span>
+                        </div>
+                        <h4 class="text-xl font-semibold">Java</h4>
+                    </div>
+                    <p class="text-slate-300 mb-4">Classes e métodos em Java orientado a objetos.</p>
+                    <div class="flex space-x-2">
+                        <button onclick="loadExample('java')" class="flex-1 bg-blue-600 hover:bg-blue-700 px-3 py-2 rounded text-sm transition-colors">
+                            Ver Código
+                        </button>
+                        <button onclick="showLanguageInfo('java')" class="flex-1 bg-gray-600 hover:bg-gray-700 px-3 py-2 rounded text-sm transition-colors">
+                            Info
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="bg-slate-800 rounded-lg p-6 border border-slate-700 hover-glow transition-all duration-300">
+                    <div class="flex items-center mb-4">
+                        <div class="w-10 h-10 bg-purple-500 rounded-lg flex items-center justify-center mr-3">
+                            <span class="text-white font-bold">P</span>
+                        </div>
+                        <h4 class="text-xl font-semibold">PHP</h4>
+                    </div>
+                    <p class="text-slate-300 mb-4">Scripts PHP para desenvolvimento web backend.</p>
+                    <div class="flex space-x-2">
+                        <button onclick="loadExample('php')" class="flex-1 bg-blue-600 hover:bg-blue-700 px-3 py-2 rounded text-sm transition-colors">
+                            Ver Código
+                        </button>
+                        <button onclick="showLanguageInfo('php')" class="flex-1 bg-gray-600 hover:bg-gray-700 px-3 py-2 rounded text-sm transition-colors">
+                            Info
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="py-20 bg-slate-800">
+        <div class="container mx-auto px-6">
+            <div class="max-w-4xl mx-auto text-center">
+                <h3 class="text-4xl font-bold mb-8 bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-transparent">
+                    Sobre o MarquinhosFonte
+                </h3>
+                <p class="text-xl text-slate-300 leading-relaxed">
+                    O MarquinhosFonte foi criado com o objetivo de ajudar iniciantes e profissionais a visualizar e entender códigos com clareza. 
+                    Nossa plataforma oferece uma interface moderna e intuitiva para explorar diferentes linguagens de programação, 
+                    com destaque de sintaxe profissional e exemplos práticos que facilitam o aprendizado.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contato" class="py-20 bg-slate-900">
+        <div class="container mx-auto px-6">
+            <h3 class="text-4xl font-bold text-center mb-12 bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-transparent">
+                Entre em Contato
+            </h3>
+            
+            <div class="max-w-4xl mx-auto">
+                <div class="grid md:grid-cols-2 gap-12">
+                    <div>
+                        <h4 class="text-2xl font-semibold mb-6">Fale Conosco</h4>
+                        <div class="space-y-4">
+                            <a href="https://wa.me/5511999999999" target="_blank" class="flex items-center space-x-3 bg-green-600 hover:bg-green-700 px-6 py-3 rounded-lg transition-colors">
+                                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.885 3.488"/>
+                                </svg>
+                                <span>WhatsApp</span>
+                            </a>
+                            <a href="mailto:contato@marquinhosfonte.com" class="flex items-center space-x-3 bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-lg transition-colors">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                                </svg>
+                                <span>Enviar E-mail</span>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h4 class="text-2xl font-semibold mb-6">Formulário de Contato</h4>
+                        <p class="text-sm text-yellow-400 mb-4">⚠️ Demo - Formulário não funcional</p>
+                        <form class="space-y-4">
+                            <input type="text" placeholder="Seu nome" class="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-3 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <input type="email" placeholder="Seu e-mail" class="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-3 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <textarea placeholder="Sua mensagem" rows="4" class="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-3 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                            <button type="button" onclick="showFormDemo()" class="w-full bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 px-6 py-3 rounded-lg font-semibold transition-all duration-300">
+                                Enviar Mensagem
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-slate-800 border-t border-slate-700 py-12">
+        <div class="container mx-auto px-6">
+            <div class="grid md:grid-cols-3 gap-8">
+                <div>
+                    <div class="flex items-center space-x-2 mb-4">
+                        <div class="w-8 h-8 bg-gradient-to-r from-blue-500 to-cyan-400 rounded-lg flex items-center justify-center">
+                            <span class="text-white font-bold text-sm">MF</span>
+                        </div>
+                        <h5 class="text-xl font-bold bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-transparent">
+                            MarquinhosFonte
+                        </h5>
+                    </div>
+                    <p class="text-slate-400">Visualização de códigos-fonte moderna e interativa.</p>
+                </div>
+                
+                <div>
+                    <h5 class="text-lg font-semibold mb-4">Links Rápidos</h5>
+                    <div class="space-y-2">
+                        <a href="#inicio" class="block text-slate-400 hover:text-blue-400 transition-colors">Início</a>
+                        <a href="#linguagens" class="block text-slate-400 hover:text-blue-400 transition-colors">Linguagens</a>
+                        <a href="#exemplos" class="block text-slate-400 hover:text-blue-400 transition-colors">Exemplos</a>
+                        <a href="#contato" class="block text-slate-400 hover:text-blue-400 transition-colors">Contato</a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h5 class="text-lg font-semibold mb-4">Redes Sociais</h5>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-slate-400 hover:text-blue-400 transition-colors">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/>
+                            </svg>
+                        </a>
+                        <a href="#" class="text-slate-400 hover:text-blue-400 transition-colors">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M22.46 6c-.77.35-1.6.58-2.46.69.88-.53 1.56-1.37 1.88-2.38-.83.5-1.75.85-2.72 1.05C18.37 4.5 17.26 4 16 4c-2.35 0-4.27 1.92-4.27 4.29 0 .34.04.67.11.98C8.28 9.09 5.11 7.38 3 4.79c-.37.63-.58 1.37-.58 2.15 0 1.49.75 2.81 1.91 3.56-.71 0-1.37-.2-1.95-.5v.03c0 2.08 1.48 3.82 3.44 4.21a4.22 4.22 0 0 1-1.93.07 4.28 4.28 0 0 0 4 2.98 8.521 8.521 0 0 1-5.33 1.84c-.34 0-.68-.02-1.02-.06C3.44 20.29 5.7 21 8.12 21 16 21 20.33 14.46 20.33 8.79c0-.19 0-.37-.01-.56.84-.6 1.56-1.36 2.14-2.23z"/>
+                            </svg>
+                        </a>
+                        <a href="#" class="text-slate-400 hover:text-blue-400 transition-colors">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-slate-700 mt-8 pt-8 text-center">
+                <p class="text-slate-400">&copy; 2024 MarquinhosFonte. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const codeExamples = {
+            html: `<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minha Primeira Página</title>
+</head>
+<body>
+    <h1>Olá, Mundo!</h1>
+    <p>Esta é minha primeira página HTML.</p>
+    <ul>
+        <li>Item 1</li>
+        <li>Item 2</li>
+        <li>Item 3</li>
+    </ul>
+</body>
+</html>`,
+            css: `<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exemplo CSS</title>
+    <style>
+        /* Reset básico */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Estilo do corpo */
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        /* Container principal */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        /* Título */
+        h1 {
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        /* Botão moderno */
+        .btn {
+            background: #4CAF50;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: block;
+            margin: 20px auto;
+        }
+
+        .btn:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Exemplo de CSS Moderno</h1>
+        <p>Este é um exemplo de como o CSS pode transformar uma página simples em algo bonito e moderno.</p>
+        <button class="btn">Botão Estilizado</button>
+    </div>
+</body>
+</html>`,
+            javascript: `<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exemplo JavaScript</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f0f2f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #0056b3; }
+        #resultado {
+            margin: 20px 0;
+            padding: 15px;
+            background: #e7f3ff;
+            border-radius: 5px;
+            min-height: 50px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Exemplo JavaScript Interativo</h1>
+        <p>Clique nos botões para ver o JavaScript em ação!</p>
+        
+        <button onclick="saudar()">Saudação Personalizada</button>
+        <button onclick="calcular()">Calcular Números</button>
+        <button onclick="mudarCor()">Mudar Cor</button>
+        
+        <div id="resultado">Clique em um botão para ver o resultado...</div>
+    </div>
+
+    <script>
+        function saudar() {
+            const nome = prompt('Qual é o seu nome?') || 'Visitante';
+            const agora = new Date();
+            const hora = agora.getHours();
+            
+            let periodo = hora < 12 ? "Bom dia" : hora < 18 ? "Boa tarde" : "Boa noite";
+            
+            document.getElementById('resultado').innerHTML = 
+                \`<h3>\${periodo}, \${nome}!</h3><p>Agora são \${agora.toLocaleTimeString()}</p>\`;
+        }
+        
+        function calcular() {
+            const numeros = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+            const pares = numeros.filter(n => n % 2 === 0);
+            const dobrados = numeros.map(n => n * 2);
+            
+            document.getElementById('resultado').innerHTML = 
+                \`<h3>Cálculos com Arrays:</h3>
+                <p><strong>Números originais:</strong> \${numeros.join(', ')}</p>
+                <p><strong>Números pares:</strong> \${pares.join(', ')}</p>
+                <p><strong>Números dobrados:</strong> \${dobrados.join(', ')}</p>\`;
+        }
+        
+        function mudarCor() {
+            const cores = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57'];
+            const corAleatoria = cores[Math.floor(Math.random() * cores.length)];
+            
+            document.body.style.background = corAleatoria;
+            document.getElementById('resultado').innerHTML = 
+                \`<h3>Cor alterada!</h3><p>Nova cor de fundo: \${corAleatoria}</p>\`;
+        }
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97affe1830901aed',t:'MTc1NzE4Mjk1NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>`,
+            python: `# Classe para representar uma pessoa
+class Pessoa:
+    def __init__(self, nome, idade):
+        self.nome = nome
+        self.idade = idade
+    
+    def apresentar(self):
+        return f"Olá, eu sou {self.nome} e tenho {self.idade} anos."
+    
+    def eh_maior_idade(self):
+        return self.idade >= 18
+
+# Função para calcular fibonacci
+def fibonacci(n):
+    if n <= 1:
+        return n
+    return fibonacci(n-1) + fibonacci(n-2)
+
+# Lista de pessoas
+pessoas = [
+    Pessoa("Ana", 25),
+    Pessoa("João", 17),
+    Pessoa("Maria", 30)
+]
+
+# Filtrar pessoas maiores de idade
+maiores_idade = [p for p in pessoas if p.eh_maior_idade()]
+
+# Exibir resultados
+for pessoa in maiores_idade:
+    print(pessoa.apresentar())
+
+# Calcular os primeiros 10 números de Fibonacci
+print("Sequência de Fibonacci:")
+for i in range(10):
+    print(f"F({i}) = {fibonacci(i)}")`,
+            java: `// Classe principal
+public class ExemploJava {
+    public static void main(String[] args) {
+        // Criando objetos
+        Pessoa pessoa1 = new Pessoa("João", 25);
+        Pessoa pessoa2 = new Pessoa("Maria", 30);
+        
+        // Testando métodos
+        System.out.println(pessoa1.apresentar());
+        System.out.println(pessoa2.apresentar());
+        
+        // Calculadora simples
+        Calculadora calc = new Calculadora();
+        System.out.println("Soma: " + calc.somar(10, 5));
+        System.out.println("Multiplicação: " + calc.multiplicar(4, 3));
+    }
+}
+
+// Classe Pessoa
+class Pessoa {
+    private String nome;
+    private int idade;
+    
+    // Construtor
+    public Pessoa(String nome, int idade) {
+        this.nome = nome;
+        this.idade = idade;
+    }
+    
+    // Métodos getters
+    public String getNome() {
+        return nome;
+    }
+    
+    public int getIdade() {
+        return idade;
+    }
+    
+    // Método para apresentação
+    public String apresentar() {
+        return "Olá, eu sou " + nome + " e tenho " + idade + " anos.";
+    }
+}
+
+// Classe Calculadora
+class Calculadora {
+    public int somar(int a, int b) {
+        return a + b;
+    }
+    
+    public int multiplicar(int a, int b) {
+        return a * b;
+    }
+}`,
+            php: `<?php
+// Classe para gerenciar usuários
+class Usuario {
+    private $nome;
+    private $email;
+    private $senha;
+    
+    public function __construct($nome, $email, $senha) {
+        $this->nome = $nome;
+        $this->email = $email;
+        $this->senha = password_hash($senha, PASSWORD_DEFAULT);
+    }
+    
+    public function getNome() {
+        return $this->nome;
+    }
+    
+    public function getEmail() {
+        return $this->email;
+    }
+    
+    public function verificarSenha($senha) {
+        return password_verify($senha, $this->senha);
+    }
+    
+    public function toArray() {
+        return [
+            'nome' => $this->nome,
+            'email' => $this->email
+        ];
+    }
+}
+
+// Função para conectar ao banco de dados
+function conectarBanco() {
+    $host = 'localhost';
+    $dbname = 'meu_site';
+    $username = 'usuario';
+    $password = 'senha';
+    
+    try {
+        $pdo = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        return $pdo;
+    } catch(PDOException $e) {
+        die("Erro na conexão: " . $e->getMessage());
+    }
+}
+
+// Exemplo de uso
+$usuario = new Usuario("João Silva", "joao@email.com", "minhasenha123");
+
+// Array de dados
+$dados = [
+    'usuarios' => [$usuario->toArray()],
+    'total' => 1,
+    'status' => 'ativo'
+];
+
+// Retornar JSON
+header('Content-Type: application/json');
+echo json_encode($dados, JSON_PRETTY_PRINT);
+?>`
+        };
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        function scrollToSection(sectionId) {
+            document.getElementById(sectionId).scrollIntoView({
+                behavior: 'smooth'
+            });
+        }
+
+        function loadExample(language) {
+            const selector = document.getElementById('language-selector');
+            const codeEditor = document.getElementById('code-editor');
+            const languageIndicator = document.getElementById('language-indicator');
+            
+            selector.value = language;
+            codeEditor.value = codeExamples[language];
+            languageIndicator.textContent = language.toUpperCase();
+            
+            // Update editor colors based on language
+            updateEditorStyle(language);
+            
+            // Scroll to code section
+            scrollToSection('linguagens');
+        }
+
+        function loadExampleCode() {
+            const language = document.getElementById('language-selector').value;
+            loadExample(language);
+        }
+
+        function loadExampleWithPreview(language) {
+            loadExample(language);
+            setTimeout(() => previewCode(), 100);
+        }
+
+        function updateEditorStyle(language) {
+            const codeEditor = document.getElementById('code-editor');
+            const colorMap = {
+                'html': 'text-orange-400',
+                'css': 'text-blue-400',
+                'javascript': 'text-yellow-400',
+                'python': 'text-green-400',
+                'java': 'text-red-400',
+                'php': 'text-purple-400'
+            };
+            
+            // Remove all color classes
+            Object.values(colorMap).forEach(color => {
+                codeEditor.classList.remove(color);
+            });
+            
+            // Add the appropriate color
+            codeEditor.classList.add(colorMap[language] || 'text-green-400');
+        }
+
+        function previewCode() {
+            const language = document.getElementById('language-selector').value;
+            const codeEditor = document.getElementById('code-editor');
+            const previewFrame = document.getElementById('preview-frame');
+            const code = codeEditor.value.trim();
+            
+            if (!code) {
+                previewFrame.srcdoc = `
+                    <html>
+                        <head>
+                            <style>
+                                body { 
+                                    font-family: Arial, sans-serif; 
+                                    padding: 40px; 
+                                    background: #f8f9fa;
+                                    text-align: center;
+                                    color: #666;
+                                }
+                            </style>
+                        </head>
+                        <body>
+                            <h3>📝 Editor vazio</h3>
+                            <p>Digite algum código no editor ou carregue um exemplo para ver a visualização.</p>
+                        </body>
+                    </html>
+                `;
+                return;
+            }
+            
+            if (language === 'html' || language === 'css' || language === 'javascript') {
+                previewFrame.srcdoc = code;
+            } else {
+                previewFrame.srcdoc = `
+                    <html>
+                        <head>
+                            <style>
+                                body { 
+                                    font-family: Arial, sans-serif; 
+                                    padding: 20px; 
+                                    background: #f8f9fa;
+                                    text-align: center;
+                                }
+                                .info-box {
+                                    background: #e3f2fd;
+                                    border: 2px solid #2196f3;
+                                    border-radius: 10px;
+                                    padding: 20px;
+                                    margin: 20px 0;
+                                }
+                                .code-preview {
+                                    background: #f5f5f5;
+                                    border: 1px solid #ddd;
+                                    border-radius: 5px;
+                                    padding: 15px;
+                                    margin: 15px 0;
+                                    text-align: left;
+                                    font-family: monospace;
+                                    white-space: pre-wrap;
+                                    max-height: 200px;
+                                    overflow-y: auto;
+                                }
+                            </style>
+                        </head>
+                        <body>
+                            <div class="info-box">
+                                <h2>🔍 Visualização de ${language.toUpperCase()}</h2>
+                                <p>Esta linguagem não pode ser executada diretamente no navegador, mas aqui está o código formatado:</p>
+                                <div class="code-preview">${code.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>
+                                <p><small>💡 Para executar este código, você precisaria de um ambiente ${language.toUpperCase()} configurado.</small></p>
+                            </div>
+                        </body>
+                    </html>
+                `;
+            }
+        }
+
+        function clearCode() {
+            const codeEditor = document.getElementById('code-editor');
+            const previewFrame = document.getElementById('preview-frame');
+            
+            codeEditor.value = '';
+            previewFrame.srcdoc = `
+                <html>
+                    <head>
+                        <style>
+                            body { 
+                                font-family: Arial, sans-serif; 
+                                padding: 40px; 
+                                background: #f8f9fa;
+                                text-align: center;
+                                color: #666;
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        <h3>🗑️ Editor limpo</h3>
+                        <p>Comece digitando seu código ou carregue um exemplo!</p>
+                    </body>
+                </html>
+            `;
+        }
+
+        function showLanguageInfo(language) {
+            const infos = {
+                python: "Python é uma linguagem de programação interpretada que precisa ser executada em um ambiente Python. É muito usada para ciência de dados, inteligência artificial e desenvolvimento web.",
+                java: "Java é uma linguagem compilada que roda na JVM (Java Virtual Machine). É muito usada para desenvolvimento de aplicações empresariais e Android.",
+                php: "PHP é uma linguagem de script do lado do servidor, muito usada para desenvolvimento web. Precisa de um servidor web com PHP instalado para ser executada."
+            };
+            
+            alert(infos[language] || "Informações não disponíveis para esta linguagem.");
+        }
+
+        function copyCode() {
+            const codeEditor = document.getElementById('code-editor');
+            const text = codeEditor.value;
+            
+            if (!text.trim()) {
+                alert('Não há código para copiar! Digite algo no editor primeiro.');
+                return;
+            }
+            
+            navigator.clipboard.writeText(text).then(function() {
+                // Show success message
+                const button = event.target.closest('button');
+                const originalText = button.innerHTML;
+                button.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg><span>Copiado!</span>';
+                button.classList.remove('bg-blue-600');
+                button.classList.add('bg-green-600');
+                
+                setTimeout(() => {
+                    button.innerHTML = originalText;
+                    button.classList.remove('bg-green-600');
+                    button.classList.add('bg-blue-600');
+                }, 2000);
+            }).catch(function() {
+                alert('Erro ao copiar o código. Tente selecionar e copiar manualmente.');
+            });
+        }
+
+        function showFormDemo() {
+            alert('Este é um formulário de demonstração. Em um site real, esta mensagem seria enviada para o servidor.');
+        }
+
+        // Language selector change event
+        document.getElementById('language-selector').addEventListener('change', function() {
+            const language = this.value;
+            const languageIndicator = document.getElementById('language-indicator');
+            
+            languageIndicator.textContent = language.toUpperCase();
+            updateEditorStyle(language);
+        });
+
+        // Auto-update preview for web languages
+        document.getElementById('code-editor').addEventListener('input', function() {
+            const language = document.getElementById('language-selector').value;
+            
+            // Auto-preview for web languages only
+            if (language === 'html' || language === 'css' || language === 'javascript') {
+                clearTimeout(window.previewTimeout);
+                window.previewTimeout = setTimeout(() => {
+                    previewCode();
+                }, 1000); // Wait 1 second after user stops typing
+            }
+        });
+
+        // Initialize Prism highlighting
+        document.addEventListener('DOMContentLoaded', function() {
+            Prism.highlightAll();
+        });
+    </script>
+</body>
+</html>
